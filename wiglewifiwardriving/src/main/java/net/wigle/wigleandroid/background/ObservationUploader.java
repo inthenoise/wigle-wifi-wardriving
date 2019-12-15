@@ -69,6 +69,8 @@ public class ObservationUploader extends AbstractProgressApiRequest {
         int lineCount;
     }
 
+    private static final boolean OVERRIDE_HAS_SD = true;
+
     public ObservationUploader(final FragmentActivity context,
                                final DatabaseHelper dbHelper, final ApiListener listener,
                                boolean justWriteFile, boolean writeEntireDb, boolean writeRun) {
@@ -633,9 +635,9 @@ public class ObservationUploader extends AbstractProgressApiRequest {
         final boolean hasSD = MainActivity.hasSD();
         File file = null;
         bundle.putString( BackgroundGuiHandler.FILENAME, filename );
-        if ( hasSD ) {
+        if ( hasSD || OVERRIDE_HAS_SD ) {
             final String filepath = MainActivity.safeFilePath(
-                    Environment.getExternalStorageDirectory() ) + "/wiglewifi/";
+                    context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ) + "/";
             final File path = new File( filepath );
             //noinspection ResultOfMethodCallIgnored
             path.mkdirs();
@@ -651,7 +653,7 @@ public class ObservationUploader extends AbstractProgressApiRequest {
             bundle.putString( BackgroundGuiHandler.FILENAME, filename );
         }
 
-        final FileOutputStream rawFos = hasSD ? new FileOutputStream( file )
+        final FileOutputStream rawFos = (hasSD || OVERRIDE_HAS_SD) ? new FileOutputStream( file )
                     : context.openFileOutput( filename, Context.MODE_PRIVATE );
 
         final GZIPOutputStream fos = new GZIPOutputStream( rawFos );

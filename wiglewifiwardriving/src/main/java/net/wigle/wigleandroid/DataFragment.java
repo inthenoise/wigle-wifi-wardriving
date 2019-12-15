@@ -655,7 +655,7 @@ public final class DataFragment extends Fragment implements ApiListener, Transfe
             try {
                 if ( hasSD ) {
                     final String basePath = MainActivity.safeFilePath(
-                            Environment.getExternalStorageDirectory() ) + M8B_DIR;
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) ) + M8B_DIR;
                     final File path = new File( basePath );
                     //noinspection ResultOfMethodCallIgnored
                     path.mkdirs();
@@ -881,7 +881,7 @@ public final class DataFragment extends Fragment implements ApiListener, Transfe
             try {
                 if ( hasSD ) {
                     final String basePath = MainActivity.safeFilePath(
-                            Environment.getExternalStorageDirectory() ) + GPX_DIR;
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) ) + GPX_DIR;
                     final File path = new File( basePath );
                     //noinspection ResultOfMethodCallIgnored
                     path.mkdirs();
