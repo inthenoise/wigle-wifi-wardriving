@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.net.wifi.ScanResult;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
@@ -20,6 +21,8 @@ public final class Network implements ClusterItem {
     private final String showCapabilities;
     private final int crypto;
     private NetworkType type;
+    private CharSequence operatorFriendlyName;
+    private boolean isPasspointNetwork;
 
     private int frequency;
     private int level;
@@ -95,9 +98,15 @@ public final class Network implements ClusterItem {
      * convenience constructor
      * @param scanResult a result from a wifi scan
      */
+    @TargetApi(23)
     public Network( final ScanResult scanResult ) {
         this( scanResult.BSSID, scanResult.SSID, scanResult.frequency, scanResult.capabilities,
                 scanResult.level, NetworkType.WIFI );
+
+        if (scanResult.operatorFriendlyName != null) {
+            this.setOperatorFriendlyName(scanResult.operatorFriendlyName);
+        }
+        this.isPasspointNetwork = scanResult.isPasspointNetwork();
     }
 
     public Network( final String bssid, final String ssid, final int frequency, final String capabilities,
@@ -189,6 +198,10 @@ public final class Network implements ClusterItem {
         return type;
     }
 
+    public CharSequence getOperatorFriendlyName() { return operatorFriendlyName; }
+
+    public boolean getIsPasspointNetwork() { return isPasspointNetwork; }
+
     public Integer getChannel() {
         return channel;
     }
@@ -209,6 +222,10 @@ public final class Network implements ClusterItem {
     }
 
     public void setType(final NetworkType type) { this.type = type; }
+
+    public void setOperatorFriendlyName(CharSequence operatorFriendlyName) {
+        this.operatorFriendlyName = operatorFriendlyName;
+    }
 
     public void setSsid(final String ssid) {
         this.ssid = ssid;

@@ -267,7 +267,7 @@ public final class NetworkListAdapter extends AbstractListAdapter<Network> {
         }
 
         TextView tv = (TextView) row.findViewById(R.id.ssid);
-        tv.setText(network.getSsid() + " ");
+        tv.setText(network.getSsid() + "XXXX");
 
         tv = (TextView) row.findViewById(R.id.oui);
         final String ouiString = network.getOui(ListFragment.lameStatic.oui);

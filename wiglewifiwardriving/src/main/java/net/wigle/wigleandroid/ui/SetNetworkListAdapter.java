@@ -205,7 +205,8 @@ public final class SetNetworkListAdapter extends AbstractListAdapter<Network> {
         }
 
         TextView tv = (TextView) row.findViewById(R.id.ssid);
-        tv.setText(network.getSsid() + " ");
+        String passpointText = network.getIsPasspointNetwork() ? " | PASSPOINT! | " : " | NO PASSPOINT |";
+        tv.setText(network.getSsid() + passpointText +  " - | " + network.getOperatorFriendlyName() + " |");
 
         tv = (TextView) row.findViewById(R.id.oui);
         final String ouiString = network.getOui(ListFragment.lameStatic.oui);
