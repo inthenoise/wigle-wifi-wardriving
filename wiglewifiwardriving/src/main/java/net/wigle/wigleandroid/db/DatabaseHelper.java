@@ -89,6 +89,7 @@ public final class DatabaseHelper extends Thread {
             "create table " + NETWORK_TABLE + " ( "
                     + "bssid text primary key not null,"
                     + "ssid text not null,"
+                    + "passpoint int not null default 0"
                     + "frequency int not null,"
                     + "capabilities text not null,"
                     + "lasttime long not null,"
@@ -582,7 +583,7 @@ public final class DatabaseHelper extends Thread {
 
         // compile statements
         insertNetwork = db.compileStatement( "INSERT INTO "+NETWORK_TABLE
-                + " (bssid,ssid,frequency,capabilities,lasttime,lastlat,lastlon,type,bestlevel,bestlat,bestlon) VALUES (?,?,?,?,?,?,?,?,?,?,?)" );
+                + " (bssid,ssid,frequency,capabilities,lasttime,lastlat,lastlon,type,bestlevel,bestlat,bestlon,passpoint) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)" );
 
         insertLocationExternal = db.compileStatement( "INSERT INTO " + LOCATION_TABLE
                 + " (bssid,level,lat,lon,altitude,accuracy,time,external) VALUES (?,?,?,?,?,?,?,?)" );
@@ -591,7 +592,7 @@ public final class DatabaseHelper extends Thread {
                 + " lasttime = ?, lastlat = ?, lastlon = ? WHERE bssid = ?" );
 
         updateNetworkMetadata = db.compileStatement( "UPDATE "+NETWORK_TABLE+" SET"
-                + " bestlevel = ?, bestlat = ?, bestlon = ?, ssid = ?, frequency = ?, capabilities = ? WHERE bssid = ?" );
+                + " bestlevel = ?, bestlat = ?, bestlon = ?, ssid = ?, frequency = ?, capabilities = ?, passpoint = ? WHERE bssid = ?" );
 
         updateNetworkType = db.compileStatement( "UPDATE "+NETWORK_TABLE+" SET"
                 + " type = ? WHERE bssid = ?" );
@@ -775,6 +776,7 @@ public final class DatabaseHelper extends Thread {
                 insertNetwork.bindLong( 9, network.getLevel() );
                 insertNetwork.bindDouble( 10, location.getLatitude() );
                 insertNetwork.bindDouble( 11, location.getLongitude() );
+                insertNetwork.bindString( 12, network.getHasPasspoint() ? "1" : "0" );
 
                 start = System.currentTimeMillis();
                 // INSERT
@@ -943,7 +945,8 @@ public final class DatabaseHelper extends Thread {
                     updateNetworkMetadata.bindString( 4, network.getSsid() );
                     updateNetworkMetadata.bindLong( 5, network.getFrequency() );
                     updateNetworkMetadata.bindString( 6, network.getCapabilities() );
-                    updateNetworkMetadata.bindString( 7, bssid );
+                    updateNetworkMetadata.bindString( 7, network.getHasPasspoint() ? "1" : "0" );
+                    updateNetworkMetadata.bindString( 8, bssid );
 
                     start = System.currentTimeMillis();
                     updateNetworkMetadata.execute();

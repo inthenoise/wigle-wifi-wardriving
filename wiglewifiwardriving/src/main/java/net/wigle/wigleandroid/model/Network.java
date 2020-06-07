@@ -6,6 +6,10 @@ import java.util.Locale;
 import java.util.Map;
 import android.annotation.SuppressLint;
 import android.net.wifi.ScanResult;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -20,6 +24,9 @@ public final class Network implements ClusterItem {
     private final String showCapabilities;
     private final int crypto;
     private NetworkType type;
+    private CharSequence operatorFriendlyName;
+    private boolean hasPasspoint;
+
 
     private int frequency;
     private int level;
@@ -95,9 +102,15 @@ public final class Network implements ClusterItem {
      * convenience constructor
      * @param scanResult a result from a wifi scan
      */
-    public Network( final ScanResult scanResult ) {
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public Network(final ScanResult scanResult ) {
         this( scanResult.BSSID, scanResult.SSID, scanResult.frequency, scanResult.capabilities,
                 scanResult.level, NetworkType.WIFI );
+
+        if (scanResult.operatorFriendlyName != null) {
+            this.setOperatorFriendlyName(scanResult.operatorFriendlyName);
+        }
+        this.hasPasspoint = scanResult.isPasspointNetwork();
     }
 
     public Network( final String bssid, final String ssid, final int frequency, final String capabilities,
@@ -156,6 +169,22 @@ public final class Network implements ClusterItem {
         else {
             crypto = CRYPTO_NONE;
         }
+    }
+
+    public CharSequence getOperatorFriendlyName() {
+        return operatorFriendlyName;
+    }
+
+    public void setOperatorFriendlyName(CharSequence operatorFriendlyName) {
+        this.operatorFriendlyName = operatorFriendlyName;
+    }
+
+    public boolean getHasPasspoint() {
+        return hasPasspoint;
+    }
+
+    public void setHasPasspoint(boolean hasPasspoint) {
+        this.hasPasspoint = hasPasspoint;
     }
 
     public String getBssid() {
